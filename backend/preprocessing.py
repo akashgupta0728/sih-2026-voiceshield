@@ -16,4 +16,4 @@ def resample(audio: np.ndarray, orig_sr: int) -> np.ndarray:
 def is_speech(audio: np.ndarray, threshold: float = 0.01) -> bool:
     # placeholder VAD — energy-based, swap for webrtcvad/silero later
     rms = np.sqrt(np.mean(audio**2))
-    return rms > threshold
+    return bool(rms > threshold)
