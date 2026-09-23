@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
+from preprocessing import bytes_to_array, is_speech
 
 app = FastAPI()
 
@@ -6,9 +7,11 @@ app = FastAPI()
 def health():
     return {"status": "healthy"}
 
-@app.websocket("/ws")   
-async def websocket_endpoint(websocket : WebSocket):
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
-        data=await websocket.receive_bytes()
-        await websocket.send_bytes(data)   
+        data = await websocket.receive_bytes()
+        audio = bytes_to_array(data)
+        speech_detected = is_speech(audio)
+        await websocket.send_json({"speech_detected": speech_detected})
